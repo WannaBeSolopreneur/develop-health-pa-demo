@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lakeshore prior authorization metrics</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <p class="kicker">Built for Develop Health by Asad Moulvi</p>
+    <h1>Prior authorization metrics for one clinic</h1>
+    <p class="lede">Synthetic data for Lakeshore Specialty Clinic. This is not a Develop Health product.</p>
+  </header>
+  <main>
+    <section id="problem">
+      <h2>Problem</h2>
+      <p>Prior authorization sits between a prescription and the medicine. A clinic can trust the numbers only when approval rate, time to a decision, and a stuck case each have one definition.</p>
+    </section>
+    <section id="solution">
+      <h2>Solution</h2>
+      <p>This demo turns messy case events into one case spine with dbt, then publishes the metrics from that spine. An agent may answer only from the semantic layer, and each clinic sees only its own rows. Tests lock the grain, the clocks, and the bridge rules.</p>
+      <ul class="tags">
+        <li>dbt</li>
+        <li>Snowflake</li>
+        <li>semantic layer</li>
+        <li>row access policies</li>
+        <li>tests</li>
+      </ul>
+    </section>
+    <section id="demo">
+      <h2>Demo</h2>
+      <p class="flag">Synthetic clinic data</p>
+      <noscript>
+        <p>This page shows numbers from a file that was built by the pipeline. JavaScript is required to read that file. It does not call a server.</p>
+      </noscript>
+      <p id="demo-intro"></p>
+      <div id="headlines" class="cards"></div>
+      <h3>Where cases stall</h3>
+      <p class="quiet">Each later stage is a subset of the one before it.</p>
+      <div id="funnel" class="funnel"></div>
+      <h3>Median hours by payer</h3>
+      <p id="payer-caption" class="quiet"></p>
+      <div id="payer-chart" class="chart"></div>
+      <h3>Ask a question</h3>
+      <p class="quiet">The box answers only a defined metric, then shows the SQL and the definition.</p>
+      <form id="ask-form">
+        <label for="ask-input">Ask a defined metric</label>
+        <div class="ask-row">
+          <input id="ask-input" name="question" autocomplete="off" placeholder="Approval rate for Wegovy">
+          <button type="submit">Ask</button>
+        </div>
+      </form>
+      <div id="chips" class="chips"></div>
+      <div id="ask-result" class="result" hidden></div>
+      <details class="fold">
+        <summary>See full breakdown</summary>
+        <h4>Where cases leave</h4>
+        <div id="exits" class="chart"></div>
+        <h4>Cases past the stage SLA</h4>
+        <p id="stuck-note" class="quiet"></p>
+        <div id="stuck" class="chart"></div>
+        <h4>By drug</h4>
+        <p class="quiet">The bar is median hours to a decision.</p>
+        <div id="by-drug" class="chart"></div>
+        <h4>By channel</h4>
+        <p class="quiet">The bar is median hours to a decision.</p>
+        <div id="by-channel" class="chart"></div>
+        <h4>Every payer</h4>
+        <p class="quiet">The bar is median hours to a decision.</p>
+        <div id="by-payer" class="chart"></div>
+        <h4>Metric definitions</h4>
+        <div id="definitions"></div>
+      </details>
+    </section>
+    <section id="about">
+      <h2>About me</h2>
+      <p>Asad Moulvi is a Data Scientist at DataQHealth. He builds healthcare data pipelines for 10M+ records a year (claims, encounters, patient attribution), a FHIR compliant AI scribe, Snowflake ETL into a client warehouse, and a PyTorch NLP system that saves nurses 3 hours a day on cardiac device alerts. He holds a Snowflake certification and an MS in Business Analytics and AI from UT Dallas.</p>
+      <p>This demo is built in dbt.</p>
+      <ul class="links">
+        <li><a href="https://github.com/WannaBeSolopreneur">GitHub</a></li>
+        <li><a href="https://www.linkedin.com/in/asad-moulvi-aaa278175">LinkedIn</a></li>
+        <li><a href="mailto:asad.moulvi01@gmail.com">asad.moulvi01@gmail.com</a></li>
+      </ul>
+    </section>
+    <details class="fold" id="how">
+      <summary>How it's built</summary>
+      <p>In Snowflake the clinic filter is a row access policy. This demo applies the same predicate in the clinic mart and in every clinic question.</p>
+      <pre class="sql-sample">where is_qa_fixture = 0
+  and clinic_id = 'clinic_lakeshore'</pre>
+      <p class="quiet">The Snowflake policy is in dbt/analyses/snowflake_row_access_policies.sql.</p>
+    </details>
+  </main>
+  <footer>
+    <p>Built for Develop Health by Asad Moulvi. Synthetic data. Not a Develop Health product.</p>
+  </footer>
+  <script src="data.js"></script>
+  <script src="ask.js"></script>
+</body>
+</html>
